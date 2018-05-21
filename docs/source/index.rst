@@ -1,17 +1,7 @@
 Welcome to blueprints documentation!
 ====================================
 
-Release v\ |version| (:ref:`Installation <install>`)
-
-About this project
-------------------
-
-Documentation will be updated in the near future.
-
-Features
---------
-
-- TBC
+Release v\ |version|
 
 Documentation
 -------------
@@ -20,5 +10,8 @@ Documentation
    :maxdepth: 2
 
    license
-   install
+   infinitystone/index
+   photonic/index
+   netrino/index
+
 
