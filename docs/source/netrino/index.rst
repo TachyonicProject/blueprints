@@ -16,12 +16,21 @@ device types. Some directly, and others via existing orchestrators of those devi
 One of the end goals is for the system to do the life cycle management of services.
 
 These services could be anything, from simple services like email, SIP or VPN services, to more complex ones like
-MPLS Layer3 VPNs or Metro Ethernet.
+end-to-end MPLS Layer3 VPNs or Metro Ethernet.
 
-For this purpose, Netrino has multiple roles. It has an Element manager, Resource manager, Templating engine and Service
-designer.
+The term "service" is used here, but it means more than just a service that is provided to a customer. It can also eg. 
+reference an internal service. For example, one could create a service that monitors some usage, and if some threshold
+is exceeded, send an alert, update some config on one device, remove some other config and add some additional config on
+another device.
+
+Another example might be a service that periodically connects to devices to gather some data in order to store it, 
+so that it can be retrieved again for graphing purposes.
+
+For these purposes, Netrino has multiple roles. It has an Element manager, Resource manager, Service designer, Service
+Request Manager and Service scheduler.
 
 .. image:: /_static/img/NetrinoOverview.png
+
 
 This page contains the blueprint for the design of Netrino.
 
@@ -62,7 +71,7 @@ Grouping
 
 InfinityStone caters for domains and regions. Netrino's elements may belong to a region, but not to a domain. The
 reason for this is that even when working inside a scoped session, all elements must still be available for service
-orchestration. For this reason all elements wil always "exist" in the global Infinitystone scope.
+orchestration. For this reason all elements will always "exist" in the global Infinitystone scope.
 
 Typically one could have more than one Netrino installation, and they may have jurisdiction over
 different regions. For High Availability purposes, a region may have more than one Netrino instance as well.
@@ -112,22 +121,22 @@ for usage again.
 
 Updating of Elements
 ====================
-Netrino assumes it is not the only orchestrator of the elements and thus allows for element configuration updates
-outside of its scope. This gives rise to the requirement that elements have to be regularly "scanned" for changes in
-configuration and resource usage. Elements can be configured to be scanned at regular intervals, or every time after
-Netrino has updated its configuration or both. The default is not to be scanned.
+Netrino assumes it is not the only orchestrator of the elements and thus caters for the case where element configuration
+are updated without its knowledge. This gives rise to the requirement that elements have to be regularly "scanned" for
+changes in configuration and resource usage. Elements can be configured to be scanned at regular intervals,
+or every time after Netrino has updated its configuration or both. The default is not to be scanned.
 
 Elements can be updated on an ad-hoc basis as well. This could for example be usefull to run after an element's IP
- address is updated.
+address is updated.
 
 Drivers
 =======
 As mentioned, the driver used for communicating with an element, is a python module. The driver can have arbitrary
 methods available, but for use with Netrino, must supply the following methods:
 
-* discover - adds device if successful communication attempt has been made.
-* create - adds device without attempting to connect (use case: device not live yet)
-* configure - updates device configuration.
+* discover - adds element if successful communication attempt has been made.
+* create - adds element without attempting to connect (use case: device not live yet)
+* configure - updates element configuration.
 * remove - removes this driver from the list of available drivers for the elements.
 * update - run a full scan on the device in order to update Netrino's view of its configuration and resource usage.
 
@@ -139,11 +148,11 @@ Resource Manager
 In order to provide a service, one typically requires resources. For example, this could be things like IP address,
 VLAN number, device port or BGP community such as a route-target. These are collectively referred to as resources.
 
-Netrino has a built-in resource manager that caters both for green fields and brown fields.
+Netrino has a built-in resource manager that caters both for green field and brown field scenarios.
 
 When creating a resource pool, it is given a type (eg. IPv4) and a range. The actual resource usage is stored in a
 different table that references this pool. In the brown-fields scenario, whenever an
-element is :ref:`updated <updated>`, the resource usage is updated.
+element is :ref:`updated <update>`, the resource usage is updated.
 
 When designing a :ref:`service <services>`, the chosen YANG models are scanned for type definitions. Certain types can
 be linked to resource pools. For example, the `RFC 6991 <https://tools.ietf.org/html/rfc6991>`_ type definition of
@@ -154,8 +163,11 @@ Service is requested.
 Resource pools thus have an optional associated list of YANG type definitions.
 
 Resource pools can be globally significant (e.g. public IPv4's) or element-significant (eg. VLANS on a switch). Unless
-specified otherwise, global is assumed. If locally significant is specified during the cration/updating of a resource
+specified otherwise, global is assumed. If locally significant is specified during the creation/updating of a resource
 pool, then the element or element tag has to be specified that this resource pool is linked to.
+
+Elements can also be resources. When elements are to be auto-allocated, an element tag must be associated to the specific
+YANG model in the :ref:`service <services>`.
 
 ----------------
 Service Desginer
@@ -179,18 +191,33 @@ In order for Netrino to provision a service, it has to be told what the service 
 provides to the operator the opportunity to do just this.
 
 When designing a service, the operator specifies the YANG model or models to use for the service. Each model can also
-be linked to an element or element tag. In case linked to an element tag, the requester of the service has to specify
-which of those elements is to be used for this particular model of the service. (Choosing an element that does not have
-the associated tag will result in a failure of the service request creation.)
+be linked to an element or element tag. In case linked to an element tag, the requester of the service may specify
+which of those elements are to be used for this particular model of the service. (Specifying an element that does not have
+the associated tag will result in a failure of the service request creation.) If the element id is omitted, an element
+is auto-allocated from the pool of elements with the tag, if auto-allcation of the element was specified.
+
+By default, for each YANG model specified, only leafs with the mandatory statement in the YANG model are considered
+to be manditory. Netrino provides the opportunity for the operator to override this for each leaf/container in the
+model, and also provides the opportunity to link which ones should be auto-allocated from a resource pool
+(and in that case which pool).
 
 By default, the netconf driver will be used for communication with the element, but this can be overwritten when
-designing the service. The JSON data sent in the request for creation of the service, must contain the device ID and
-data matching the YANG model for each model.
+designing the service. The JSON data sent in the request for creation of the service, may contain the device ID and
+data matching the YANG model for each model. Netrino will attempt to auto-allocate compulsary fields that was missing 
+from the request, if those leafs/containers were specified to be auto-allocated.
 
-Some drivers do not make use of netconf as the underlying communication protocol. When Services are designed for these,
+Some drivers do not make use of netconf as the underlying communication protocol. When services are designed for these,
 we still specify a YANG model, but specify a different driver to be used. Netrino comes with a couple of built-in YANG
-modes for its built-in drivers, such as ansible and SNMP. These YANG models are purely used for validation during
-creation of the :ref:`service request`, the actual data sent is passed to the driver directly if successful.
+models for its built-in drivers, such as ansible and SNMP. These YANG models are used during the creation of the 
+:ref:`service_request` for:
+
+* validating that the data received conforms to the model, and
+* auto-allocation of resources that was required as per the service template, but was not present in the data.
+
+If the validation and allocation was successfull during such a service request, the received data is updated with the
+auto-allocated data, and passed onward to the driver.
+
+.. image:: /_static/img/ServiceDesigner.png
 
 .. _service_request:
 
@@ -203,7 +230,7 @@ a service request on Netrino.
 
 The customer is automatically selected as the current tenant in the Infinitystone scope, and the service template
 must explicitly be specified. Once the service template is known, the additional fields is dictated by the YANG models
-in the service template. If the data in the service request can not be parsed for whatever reason (inluding invalid
+in the service template. If the data in the service request can not be parsed for whatever reason (including invalid
 syntax, required field(s) missing or resource depleted) the service request is not created. On the other hand, if all
 information was supplied correctly, the service request is created immediately, and the user may reference it at any time
 to get an update on its status.
