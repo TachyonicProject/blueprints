@@ -193,7 +193,7 @@ provides to the operator the opportunity to do just this.
 When designing a service, the operator specifies the YANG model or models to use for the service. Each model can also
 be linked to an element or element tag. In case linked to an element tag, the requester of the service may specify
 which of those elements are to be used for this particular model of the service. (Specifying an element that does not have
-the associated tag will result in a failure of the :ref:`service request <service_request>` creation.)
+the associated tag will result in a failure of the :ref:`Service Request <service_request>` creation.)
 If the element id is omitted, an element is auto-allocated from the pool of elements with the tag, if auto-allcation
 of the element was specified.
 
@@ -219,6 +219,17 @@ If the validation and allocation was successfull during such a service request, 
 auto-allocated data, and passed onward to the driver.
 
 .. image:: /_static/img/ServiceDesigner.png
+
+.. _dst:
+
+Services are also used for the purpose of obtaining data from elements. Let's call these Data Services Templates.
+
+Each model in a Service Template can also be associated to such a Data Service Template, for the purposes of gathering
+Data related to the model, and storing it in the Service Request. For example, a Service Template might be for a
+Virtual Machine (VM) deployed on an Openstack cluster.
+When such a Service has peen provisioned, one might care about data such as the IP address that
+was assigned, and the URL to access the console. For this purpose one can create a Data Service Template that retrieves
+the required data to be stored in the :ref:`Service Request <service_request>` for the VM Service.
 
 Netrino is also to provide the option to allocate a cost to a Service. This is optional, and can have one of two
 payment types: Once-off or recurring. In the case of recurring, the recurrance period can also be specified. There
@@ -252,7 +263,26 @@ in order to prevent a race condition. If spare resources in the pool has been de
 
 The data sent in the Service Request, comprises of a service Template ID, and an ordered array of objects. Each object
 should contain the data for the corresponding YANG model in the :ref:`Service Template<services>`, as well as the
-element ID(s) if required.
+element ID(s) if required. Each one of the entries in the list is of course passed to a minion.
+
+Each of these tasks may return some data. The worker performing the task will update its associated model in the service
+request with the data returned, for the purposes of viewing a log of the result of the task.
+
+In addition to attributes like
+
+* Date Service was activated
+* Date Service was cancelled
+* Current Service status
+
+each Service Request also makes provision for storing additional arbitrary data related to each model in the
+service. When the status for a Service Request is queried for the first time, it will fire up a Service Request on each
+of the :ref:`Data Service Templates<dst>` associated with the models, if any. The results of those Service Requests,
+are used to populate this field.
+
+Subsequent attempts on Service Requests Status will update these fields.
+
+
+
 
 -----------------------
 Service Request Manager
