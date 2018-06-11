@@ -46,7 +46,7 @@ which) and as extensible as possible (allowing for future-proofing by catering f
 of new methods).
 
 The devices on which Netrino has to orchestrate services, are referred to as elements. Netrino needs to store a list
-of these elements, for the purpose of maiking them available as options when services are to be provisioned on them.
+of these elements, for the purpose of making them available as options when services are to be provisioned on them.
 
 Typically, elements will have an IP address associated, which is used for communicating with the device. However, it is
 foreseen that Netrino is to know about devices which it can not communicate with. An example would be a cabinet in which
@@ -194,7 +194,7 @@ When designing a service, the operator specifies the YANG model or models to use
 be linked to an element or element tag. In case linked to an element tag, the requester of the service may specify
 which of those elements are to be used for this particular model of the service. (Specifying an element that does not have
 the associated tag will result in a failure of the :ref:`Service Request <service_request>` creation.)
-If the element id is omitted, an element is auto-allocated from the pool of elements with the tag, if auto-allcation
+If the element id is omitted, an element is auto-allocated from the pool of elements with the tag, if auto-allocation
 of the element was specified.
 
 By default, for each YANG model specified, only leafs with the mandatory statement in the YANG model are considered
