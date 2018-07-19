@@ -26,8 +26,8 @@ another device.
 Another example might be a service that periodically connects to devices to gather some data in order to store it,
 so that it can retrieved again for graphing purposes.
 
-For these purposes, Netrino has multiple roles. It has an Element manager, Resource manager, Service designer, Service
-Request Manager and Service scheduler.
+For these purposes, Netrino has multiple components. It has an South-bound API's, an Element manager, Resource manager,
+Service designer, Service Request Manager, Service scheduler, Templating engine and Orchestration engine.
 
 .. image:: /_static/img/NetrinoOverview.png
 
@@ -56,10 +56,33 @@ Elements should have at least a name. For servers and network devices like route
 The primary key used to reference elements is a UUID, which allows one to change an element's IP and/or hostname without
 losing any back references.
 
-Netrino uses drivers to communicate with devices. These drivers are python modules. The drivers register themselves with
-Netrino to make their presence known. Netrino comes with a couple of built-in drivers, and also provides the ability to
-easily add new drivers. As mentioned previously, an element may have more than one driver associated with it. The
-specific driver to use for communication during a particular request, is to be explicitly defined during the design of
+Netrino communicates with devices through what is known as South-bound Interfaces, just referred to here as
+"interfaces". These interfaces are python modules. They register themselves as python entry points called
+``netrino_interfaces`` to make their presence known to Netrino.
+Netrino comes with a couple of built-in interfaces (netconf, ansible, snmp, openstack,
+contrail) but also provides the ability to easily add new interfaces.
+
+Here is the example python setuptools entry point registration for netconf:
+
+.. code::
+
+    setup_dict = dict(
+        entry_points={
+            'netrino_discover': [
+                'netconf = netrino.interfaces.netconf.discover:discover'
+            ],
+            'netrino_interfaces': [
+                'netconf = netrino.interfaces.netconf.interface:Interface'
+            ],
+            'netrino_elements': [
+                'netconf = netrino.interfaces.netconf.element:Element'
+            ],
+        }
+    )
+
+As mentioned previously, an element may have more than one interface associated with it.
+The specific interface to use for communication during a particular request,
+is to be explicitly defined during the design of
 a :ref:`service <services>`.
 
 Elements may have a parent element associated with them. For example, a server might have the UUID of a cabinet as its
@@ -85,30 +108,30 @@ This allows one to tag devices by category, purpose, or whatever grouping is use
 
 Addition of New Elements
 ========================
-When a new element is added to Netrino, one may specify the drivers available for communication with the device.
-If no drivers are associated with the device, communication with it wil not be possible.
+When a new element is added to Netrino, one may specify the interfaces available for communication with the device.
+If no interface are associated with the device, communication with it wil not be possible.
 
 During element creation, a UUID is generated, and an element name must be supplied. The only compulsory field is the device name, which has to be
 unique, in order to prevent the confusion which would most likely ensue when it isn't. The following fields are
 optional:
 
-* Tags
-* Region
+* Tags [#tags]_
 * Parent element UUID
 * Periodic scanning enabled, and if so the interval.
 * After-provisioning scanning enabled
 
-Some drivers store additional information about elements. The SNMP driver for example will store the version and
-community string required to communicate with the device, while the SSH driver stores username and password or key.
-Some drivers also store :ref:`resources <resources>` associated with the element.
+Interfaces store additional information about elements. Specifically, things such as logn credentials. The SNMP driver
+for example will store the version and community string required to communicate with the device, while the SSH driver
+stores username and password or key. This is stored in the database as a json entry, and is called metadata.
+Some interfaces also store :ref:`resources <resources>` associated with the element.
 
 Discovering of new Elements
 ---------------------------
 Netrino also provides the ability for the bulk addition of elements. When a subnet is supplied during a creation
 request instead of a single IP address, it will iterate through the ip addresses in the subnet
 and attempt to connect to each one.
-When a successful communication attempt has been made, it is the task of the driver to add the element
-(or update if it already exists), include itself in the list of available drivers for the element,
+When a successful communication attempt has been made, it is the task of the interface to add the element
+(or update if it already exists), include itself in the list of available interfaces for the element,
 and update all other relevant tables such as resource tables as needed.
 
 Removal of Elements
@@ -121,24 +144,37 @@ for usage again.
 
 Updating of Elements
 ====================
-Netrino considers the networked elements to be the "source of truth" when it comes to resources. It
-assumes it is not the only orchestrator of the elements and thus caters for the case where element configuration
-are updated without its knowledge. This gives rise to the requirement that elements have to be regularly "scanned" for
+In the future Netrino may consider the networked elements to be the "source of truth" when it comes to resources. The
+idea is then for it to assume it is not the only orchestrator of the elements and thus caters for the case where
+element configuration are updated without its knowledge.
+This gives rise to the requirement that elements have to be regularly "scanned" for
 changes in configuration and resource usage. Elements can be configured to be scanned at regular intervals,
 or every time after Netrino has updated its configuration or both. The default is not to be scanned.
 
 Elements can be updated on an ad-hoc basis as well.
 
-Drivers
-=======
-As mentioned, the driver used for communicating with an element, is a python module. The driver can have arbitrary
-methods available, but for use with Netrino, must supply the following methods:
+Interfaces
+==========
+As mentioned, the interface used for communicating with an element, is a python module. It has an ``Interface`` class
+ registered as ``netrino_interface`` entry point. This module must also register a ``Discover`` and ``Element`` class as
+``netrino_discover`` and ``netrino_element`` entry points respectively. The discover class will add an element if
+successful communication attempt has been made via the same interface, and the element class is a Luxon model indicating
+the structure of the metadata.
 
-* discover - adds element if successful communication attempt has been made.
-* create - adds element without attempting to connect (use case: device not live yet)
-* configure - updates element configuration.
-* remove - removes this driver from the list of available drivers for the elements.
-* update - run a full scan on the device in order to update Netrino's view of its configuration and resource usage.
+The Interface class will use some method to update an element's operating state. For example, the
+netconf interface makes use of the ``ncclient`` library, which offers the ``edit_config`` method for NETCONF's
+`edit-config <https://tools.ietf.org/html/rfc6241#section-7.2>`_ operation. This method must be made known to
+Netrino in order to use it when orcestrating a service.
+
+
+..  Old: The driver can have arbitrary
+    methods available, but for use with Netrino, must supply the following methods:
+
+    * discover - adds element if successful communication attempt has been made.
+    * create - adds element without attempting to connect (use case: device not live yet)
+    * configure - updates element configuration.
+    * remove - removes this driver from the list of available drivers for the elements.
+    * update - run a full scan on the device in order to update Netrino's view of its configuration and resource usage.
 
 .. _resources:
 
@@ -148,7 +184,8 @@ Resource Manager
 In order to provide a service, one typically requires resources. For example, this could be things like IP address,
 VLAN number, device port or BGP community such as a route-target. These are collectively referred to as resources.
 
-Netrino has a built-in resource manager that caters both for green field and brown field scenarios.
+Netrino has a built-in resource manager for which the idea is to eventually cater for
+both for green field and brown field scenarios.
 
 When creating a resource pool, it is given a type (eg. IPv4) and a range. The actual resource usage is stored in a
 different table that references this pool. In the brown-fields scenario, whenever an
@@ -173,8 +210,19 @@ YANG model in the :ref:`service <services>`.
 Service Desginer
 ----------------
 
-YANG
-====
+Templating Engine
+=================
+The Templating Engine is responsible for managing the templates. When templates are created, they are uploaded
+to the object store (Katalog).
+
+
+Orchestration Templates
+-----------------------
+Netrino offers the following orchestration templates.
+
+
+**YANG**
+
 Netrino makes use of `YANG <https://tools.ietf.org/html/rfc7950>`_ models to define Services. Although YANG was designed
 along side NETCONF, it can be used for any arbitrary modelling since it can be serialized into popular API notation
 formats such as JSON or XML.
@@ -183,10 +231,35 @@ This means not only does Netrino support your favourite vendor out of the box by
 supports NETCONF), but you can even make provision for ones that don't by creating the YANG model and driver for it
 yourself.
 
+The YANG models are stored in the object store, and a helper function is supplied that can map the module
+name to the namespace, to be stored for easy lookup.
+
+**HEAT**
+
+Netrino also makes HEAT templates available for orchestration.
+
+**Ansible**
+
+Netrino also makes HEAT templates available for orchestration
+
+**TEXT**
+
+Text templates can be used for example when the underlying element interface can take configuration snippets as input.
+For example napalm's ``load_merge()`` method.
+
+**JSON**
+
+Json templates, typically used alongside with REST API element interfaces.
+
+**XML**
+
+XML templates.
+
+
 .. _services:
 
 Service Templates
-=================
+-----------------
 In order for Netrino to provision a service, it has to be told what the service comprises of. The Service designer
 provides to the operator the opportunity to do just this.
 
@@ -202,21 +275,27 @@ to be manditory. Netrino provides the opportunity for the operator to override t
 model, and also provides the opportunity to link which ones should be auto-allocated from a resource pool
 (and in that case which pool).
 
-By default, the netconf driver will be used for communication with the element, but this can be overwritten when
-designing the service. The JSON data sent in the request for creation of the service, may contain the device ID and
-data matching the YANG model for each model. Netrino will attempt to auto-allocate compulsary fields that was missing
+By default, the netconf interface will be used for communication with the element, but this can be overwritten when
+designing the service. The JSON data sent in the request (to the orchestration engine)
+for creation of the service, may contain the device ID and data matching the YANG model for each model.
+Netrino will attempt to auto-allocate compulsory fields that was missing
 from the request, if those leafs/containers were specified to be auto-allocated.
 
-Some drivers do not make use of netconf as the underlying communication protocol. When services are designed for these,
-we still specify a YANG model, but specify a different driver to be used. Netrino comes with a couple of built-in YANG
-models for its built-in drivers, such as ansible and SNMP. These YANG models are used during the creation of the
+JSON data that is send to the REST API of the element interface view, must conform to
+`RFC7951 JSON Encoding of Data Modeled with YANG <https://tools.ietf.org/html/rfc7951>`_
+in order to identify the
+particular YANG model. From the namespace to module mapping, the YANG model can be retrieved for each submitted portion
+
+Some interfaces do not make use of netconf as the underlying communication protocol. When services are designed for these,
+we still specify a YANG model, but specify a different interface to be used. Netrino comes with a couple of built-in
+YANG models for its built-in drivers, such as ansible and SNMP. These YANG models are used during the creation of the
 :ref:`service_request` for:
 
 * validating that the data received conforms to the model, and
 * auto-allocation of resources that was required as per the service template, but was not present in the data.
 
 If the validation and allocation was successfull during such a service request, the received data is updated with the
-auto-allocated data, and passed onward to the driver.
+auto-allocated data, and passed onward to the interface.
 
 .. image:: /_static/img/ServiceDesigner.png
 
@@ -282,8 +361,6 @@ are used to populate this field.
 Subsequent attempts on Service Requests Status will update these fields.
 
 
-
-
 -----------------------
 Service Request Manager
 -----------------------
@@ -302,3 +379,4 @@ supports once-off Service Request creation, as well as recurring creation of Ser
 .. rubric:: Footnotes
 
 .. [#tp] The Tachyonic Project is a Multi-Tenant Multi-Tiered Eco System that was build for Service Providers. For more information, see `<http://tachyonic.org>`_
+.. [#tags] Using the Scuttle method. See `<http://howto.philippkeller.com/2005/04/24/Tags-Database-schemas/>`_.
