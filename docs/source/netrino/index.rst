@@ -76,8 +76,7 @@ Here is the example python setuptools entry point registration for netconf:
             ],
             'netrino_elements': [
                 'netconf = netrino.interfaces.netconf.element:Element'
-            ],
-        }
+            ]
     )
 
 As mentioned previously, an element may have more than one interface associated with it.
@@ -197,7 +196,56 @@ be linked to resource pools. For example, the `RFC 6991 <https://tools.ietf.org/
 the YANG models so that the entries can be automatically assigned from the next available resource in the pool when a
 :ref:`Service is requested <service_request>`.
 
-Resource pools thus have an optional associated list of YANG type definitions.
+Resource pools thus have an optional associated list of YANG type definitions. This is done by means of a mapping table.
+
+.. _mapping_table:
+
+**Mapping Table**
+
+Netrino also provides a mapping table, that can be used for auto-allocation during service definition and creation.
+In addition to the as-per-usual *id*, the mapping table has three columns:
+
+*Yang type* | *mapping type* | *value*
+
+Yang type is the YANG type definition.
+Mapping type can either be "resource_pool", or "netrino_mapper".
+In the case of:
+
+* resouce_pool: the value is equal to the id of a resource pool from which the leaf will be auto-allocated.
+* netrino_mapper: the value is equal to a "netrino_mappers" Entrypoint. This entrypoint returns a function that takes a luxon wsgi request object as argument, and returns some value to be used for auto-allocation of the leaf.
+
+.. note::
+
+    For example, we can have:
+
+    *ipv4-address* | *resource_pool* | *c5b040d4-180f-4b03-bdde-5c2b84b6146f*
+
+    Where:
+
+    * *ipv4-address* is the `RFC 6991 <https://tools.ietf.org/html/rfc6991>`_ type definition of ``ipv4-address``
+    * *resource_pool* means to auto allocate from a pool
+    * *c5b040d4-180f-4b03-bdde-5c2b84b6146f* is the id of the pool to allocate from
+
+    or
+
+    *tenant_id* | *netrino_mapper* | *infinitystone_tenant_from_context*
+
+    Where:
+
+    * *tenant_id* is the name of a `derived type <https://tools.ietf.org/html/rfc7950#section-7.3>`_
+    * *netrino_mapper* means to auto allocate from the result of a netrino mapper function
+    * *infinitystone_tenant* is the name of a ``netrino-mappers`` entry point.
+
+.. note:: Example Entry point:
+
+    .. code::
+
+        setup_dict = dict(
+            entry_points={
+                'netrino_mappers': [
+                    'infinitystone_tenant = netrino.mappers:tenant_from_context'
+                }
+        )
 
 Resource pools can be globally significant (e.g. public IPv4's) or element-significant (eg. VLANS on a switch). Unless
 specified otherwise, global is assumed. If locally significant is specified during the creation/updating of a resource
@@ -228,8 +276,8 @@ along side NETCONF, it can be used for any arbitrary modelling since it can be s
 formats such as JSON or XML.
 
 This means not only does Netrino support your favourite vendor out of the box by loading its YANG models (if it already
-supports NETCONF), but you can even make provision for ones that don't by creating the YANG model and driver for it
-yourself.
+supports NETCONF), but you can even make provision for ones that don't by creating the YANG model and interface/driver
+for it yourself.
 
 The YANG models are stored in the object store, and a helper function is supplied that can map the module
 name to the namespace, to be stored for easy lookup.
@@ -271,9 +319,10 @@ If the element id is omitted, an element is auto-allocated from the pool of elem
 of the element was specified.
 
 By default, for each YANG model specified, only leafs with the mandatory statement in the YANG model are considered
-to be manditory. Netrino provides the opportunity for the operator to override this for each leaf/container in the
-model, and also provides the opportunity to link which ones should be auto-allocated from a resource pool
-(and in that case which pool).
+to be manditory. Netrino provides the opportunity for the operator to override this (during service template creation)
+for each leaf/container in the model, and also provides the opportunity to link which leafs should be auto-allocated.
+
+This is done by means of the :ref:`mapping table <mapping_table>`.
 
 By default, the netconf interface will be used for communication with the element, but this can be overwritten when
 designing the service. The JSON data sent in the request (to the orchestration engine)
