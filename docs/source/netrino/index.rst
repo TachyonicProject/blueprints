@@ -228,11 +228,11 @@ In the case of:
 
     or
 
-    *tenant_id* | *netrino_mapper* | *infinitystone_tenant_from_context*
+    *tenant-id* | *netrino_mapper* | *infinitystone_tenant*
 
     Where:
 
-    * *tenant_id* is the name of a `derived type <https://tools.ietf.org/html/rfc7950#section-7.3>`_
+    * *tenant-id* is the name of a `derived type <https://tools.ietf.org/html/rfc7950#section-7.3>`_
     * *netrino_mapper* means to auto allocate from the result of a netrino mapper function
     * *infinitystone_tenant* is the name of a ``netrino-mappers`` entry point.
 
