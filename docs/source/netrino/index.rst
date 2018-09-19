@@ -1,6 +1,6 @@
-============================================
-Netrino, the TachyonicProject's Orchestrator
-============================================
+============
+Orchestrator
+============
 
 .. note:: This is still a work in progress.
 
