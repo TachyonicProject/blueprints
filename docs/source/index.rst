@@ -10,8 +10,7 @@ Documentation
    :maxdepth: 2
 
    license
-   infinitystone/index
-   photonic/index
+   objectstore/index
    netrino/index
 
 
