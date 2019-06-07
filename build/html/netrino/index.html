@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="index, follow">
+        <link rel="icon" href="../_static/icon.png">
+        <link type="text/css" rel="stylesheet" href="../_static/jquery-ui/jquery-ui.min.css">
+        <link type="text/css" rel="stylesheet" href="../_static/bootstrap/css/bootstrap.min.css">
+        <link type="text/css" rel="stylesheet" href="../_static/tachweb.css">
+        <link type="text/css" rel="stylesheet" href="../_static/doc.css">
+        <script type="text/javascript" src="../_static/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="../_static/jquery-ui/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="../_static/bootstrap/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+        <title>Orchestrator</title>
+
+    </head>
+    <body>
+        <div class="bg-dark">                                                                                                            
+			<div class="container">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                    <a href="../index.html" class="navbar-brand">
+                        <img src="../_static/icon.png" height="30px" alt="Logo" class="mr-2">
+                        Tachyonic Project Blueprints 0.0.0 documentation
+                    </a>
+				</nav>
+			</div>
+        </div>
+        <div class="heading">
+            <div class="container">
+                <H1 class="heading">Orchestrator</H1>
+            </div>
+        </div>
+        <div class="extra">
+            <div class="container">
+            </div>
+        </div>
+        <div class="page">
+        <!--DOC-->
+            <div class="rst-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="toctree-wrapper doc-menu">
+                            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bp_10004_blueprint_standard.html">Blueprint Standard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../objectstore/index.html">Object Store</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Orchestrator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#element-manager">Element Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#resource-manager">Resource Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#service-desginer">Service Desginer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#service-requests">Service Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#service-request-manager">Service Request Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#service-scheduler">Service Scheduler</a></li>
+</ul>
+</li>
+</ul>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        
+  <div class="section" id="orchestrator">
+<h1>Orchestrator<a class="headerlink" href="#orchestrator" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is still a work in progress.</p>
+</div>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The Tachyonic Project <a class="footnote-reference" href="#tp" id="id1">[1]</a> includes an orchestrator, called Netrino. Netrino is capable of orchestration on many different
+device types. Some directly, and others via existing orchestrators of those devices. Hence the reference of
+“Orchestrator of Orchestrators”.</p>
+<p>One of the end goals is for the system to do the life cycle management of services.</p>
+<p>These services could be anything, from simple services like email, SIP or VPN services, to more complex ones like
+end-to-end MPLS Layer3 VPNs or Metro Ethernet.</p>
+<p>The term “service” is used here, but it means more than just a service that is provided to a customer. It can also eg.
+reference an internal service. For example, one could create a service that monitors some usage, and if some threshold
+is exceeded, send an alert, update some config on one device, remove some other config and add some additional config on
+another device.</p>
+<p>Another example might be a service that periodically connects to devices to gather some data in order to store it,
+so that it can retrieved again for graphing purposes.</p>
+<p>For these purposes, Netrino has multiple components. It has an South-bound API’s, an Element manager, Resource manager,
+Service designer, Service Request Manager, Service scheduler, Templating engine and Orchestration engine.</p>
+<img alt="../_images/NetrinoOverview.png" src="../_images/NetrinoOverview.png" />
+<p>This page contains the blueprint for the design of Netrino.</p>
+</div>
+<div class="section" id="element-manager">
+<h2>Element Manager<a class="headerlink" href="#element-manager" title="Permalink to this headline">¶</a></h2>
+<p>Netrino has two reasons for communicating with devices. One is for information gathering, the other for configuring.
+Different devices have different methods and protocols available for these purposes. The aim for Netrino is to be
+as flexible as possible (thus allowing multiple methods to communicate to devices, and providing the option to choose
+which) and as extensible as possible (allowing for future-proofing by catering for the seamless addition
+of new methods).</p>
+<p>The devices on which Netrino has to orchestrate services, are referred to as elements. Netrino needs to store a list
+of these elements, for the purpose of making them available as options when services are to be provisioned on them.</p>
+<p>Typically, elements will have an IP address associated, which is used for communicating with the device. However, it is
+foreseen that Netrino is to know about devices which it can not communicate with. An example would be a cabinet in which
+devices are mounted. For this reason, an IP address is not a required value when storing an element’s details.</p>
+<p>Elements should have at least a name. For servers and network devices like routers, this would eg. be the hostname.
+The primary key used to reference elements is a UUID, which allows one to change an element’s IP and/or hostname without
+losing any back references.</p>
+<p>Netrino communicates with devices through what is known as South-bound Interfaces, just referred to here as
+“interfaces”. These interfaces are python modules. They register themselves as python entry points called
+<code class="docutils literal notranslate"><span class="pre">netrino_interfaces</span></code> to make their presence known to Netrino.
+Netrino comes with a couple of built-in interfaces (netconf, ansible, snmp, openstack,
+contrail) but also provides the ability to easily add new interfaces.</p>
+<p>Here is the example python setuptools entry point registration for netconf:</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setup_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">entry_points</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;netrino_discover&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;netconf = netrino.interfaces.netconf.discover:discover&#39;</span>
+        <span class="p">],</span>
+        <span class="s1">&#39;netrino_interfaces&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;netconf = netrino.interfaces.netconf.interface:Interface&#39;</span>
+        <span class="p">],</span>
+        <span class="s1">&#39;netrino_elements&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;netconf = netrino.interfaces.netconf.element:Element&#39;</span>
+        <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>As mentioned previously, an element may have more than one interface associated with it.
+The specific interface to use for communication during a particular request,
+is to be explicitly defined during the design of
+a <a class="reference internal" href="#services"><span class="std std-ref">service</span></a>.</p>
+<p>Elements may have a parent element associated with them. For example, a server might have the UUID of a cabinet as its
+parent element. The cabinet in return, might have a data center room’s UUID as its parent element reference.
+This of course implies that elements may have one or more children.</p>
+<div class="section" id="grouping">
+<h3>Grouping<a class="headerlink" href="#grouping" title="Permalink to this headline">¶</a></h3>
+<p>InfinityStone caters for domains and regions. Netrino’s elements may belong to a region, but not to a domain. The
+reason for this is that even when working inside a scoped session, all elements must still be available for service
+orchestration. For this reason all elements will always “exist” in the global Infinitystone scope.</p>
+<p>Typically one could have more than one Netrino installation, and they may have jurisdiction over
+different regions. For High Availability purposes, a region may have more than one Netrino instance as well.</p>
+<p>Inter region orchestration happens as follows: When a Netrino instance receives a request to provision on an element
+that is in another region, it will forward the request to the Netrino endpoint in that region.</p>
+<p>Elements can belong to different device groups as well, purely for convenience sake. This is done by means of tagging.
+This allows one to tag devices by category, purpose, or whatever grouping is useful.</p>
+</div>
+<div class="section" id="addition-of-new-elements">
+<h3>Addition of New Elements<a class="headerlink" href="#addition-of-new-elements" title="Permalink to this headline">¶</a></h3>
+<p>When a new element is added to Netrino, one may specify the interfaces available for communication with the device.
+If no interface are associated with the device, communication with it wil not be possible.</p>
+<p>During element creation, a UUID is generated, and an element name must be supplied. The only compulsory field is the device name, which has to be
+unique, in order to prevent the confusion which would most likely ensue when it isn’t. The following fields are
+optional:</p>
+<ul class="simple">
+<li>Tags <a class="footnote-reference" href="#tags" id="id2">[2]</a></li>
+<li>Parent element UUID</li>
+<li>Periodic scanning enabled, and if so the interval.</li>
+<li>After-provisioning scanning enabled</li>
+</ul>
+<p>Interfaces store additional information about elements. Specifically, things such as logn credentials. The SNMP driver
+for example will store the version and community string required to communicate with the device, while the SSH driver
+stores username and password or key. This is stored in the database as a json entry, and is called metadata.
+Some interfaces also store <a class="reference internal" href="#resources"><span class="std std-ref">resources</span></a> associated with the element.</p>
+<div class="section" id="discovering-of-new-elements">
+<h4>Discovering of new Elements<a class="headerlink" href="#discovering-of-new-elements" title="Permalink to this headline">¶</a></h4>
+<p>Netrino also provides the ability for the bulk addition of elements. When a subnet is supplied during a creation
+request instead of a single IP address, it will iterate through the ip addresses in the subnet
+and attempt to connect to each one.
+When a successful communication attempt has been made, it is the task of the interface to add the element
+(or update if it already exists), include itself in the list of available interfaces for the element,
+and update all other relevant tables such as resource tables as needed.</p>
+</div>
+</div>
+<div class="section" id="removal-of-elements">
+<h3>Removal of Elements<a class="headerlink" href="#removal-of-elements" title="Permalink to this headline">¶</a></h3>
+<p>Elements can be completely removed from the database. When this happens, all resources tied to it becomes available
+for usage again.</p>
+</div>
+<div class="section" id="updating-of-elements">
+<span id="update"></span><h3>Updating of Elements<a class="headerlink" href="#updating-of-elements" title="Permalink to this headline">¶</a></h3>
+<p>In the future Netrino may consider the networked elements to be the “source of truth” when it comes to resources. The
+idea is then for it to assume it is not the only orchestrator of the elements and thus caters for the case where
+element configuration are updated without its knowledge.
+This gives rise to the requirement that elements have to be regularly “scanned” for
+changes in configuration and resource usage. Elements can be configured to be scanned at regular intervals,
+or every time after Netrino has updated its configuration or both. The default is not to be scanned.</p>
+<p>Elements can be updated on an ad-hoc basis as well.</p>
+</div>
+<div class="section" id="interfaces">
+<h3>Interfaces<a class="headerlink" href="#interfaces" title="Permalink to this headline">¶</a></h3>
+<p>As mentioned, the interface used for communicating with an element, is a python module. It has an <code class="docutils literal notranslate"><span class="pre">Interface</span></code> class
+registered as <code class="docutils literal notranslate"><span class="pre">netrino_interface</span></code> entry point. This module must also register a <code class="docutils literal notranslate"><span class="pre">Discover</span></code> and <code class="docutils literal notranslate"><span class="pre">Element</span></code> class as
+<code class="docutils literal notranslate"><span class="pre">netrino_discover</span></code> and <code class="docutils literal notranslate"><span class="pre">netrino_element</span></code> entry points respectively. The discover class will add an element if
+successful communication attempt has been made via the same interface, and the element class is a Luxon model indicating
+the structure of the metadata.</p>
+<p>The Interface class will use some method to update an element’s operating state. For example, the
+netconf interface makes use of the <code class="docutils literal notranslate"><span class="pre">ncclient</span></code> library, which offers the <code class="docutils literal notranslate"><span class="pre">edit_config</span></code> method for NETCONF’s
+<a class="reference external" href="https://tools.ietf.org/html/rfc6241#section-7.2">edit-config</a> operation. This method must be made known to
+Netrino in order to use it when orcestrating a service.</p>
+</div>
+</div>
+<div class="section" id="resource-manager">
+<span id="resources"></span><h2>Resource Manager<a class="headerlink" href="#resource-manager" title="Permalink to this headline">¶</a></h2>
+<p>In order to provide a service, one typically requires resources. For example, this could be things like IP address,
+VLAN number, device port or BGP community such as a route-target. These are collectively referred to as resources.</p>
+<p>Netrino has a built-in resource manager for which the idea is to eventually cater for
+both for green field and brown field scenarios.</p>
+<p>When creating a resource pool, it is given a type (eg. IPv4) and a range. The actual resource usage is stored in a
+different table that references this pool. In the brown-fields scenario, whenever an
+element is <a class="reference internal" href="#update"><span class="std std-ref">updated</span></a>, the resource usage is updated.</p>
+<p>When designing a <a class="reference internal" href="#services"><span class="std std-ref">service</span></a>, the chosen YANG models are scanned for type definitions. Certain types can
+be linked to resource pools. For example, the <a class="reference external" href="https://tools.ietf.org/html/rfc6991">RFC 6991</a> type definition of
+<code class="docutils literal notranslate"><span class="pre">ipv4-address</span></code> is linked to IPv4 resource pools. As such, the resource pools can be associated to those entries in
+the YANG models so that the entries can be automatically assigned from the next available resource in the pool when a
+<a class="reference internal" href="#service-request"><span class="std std-ref">Service is requested</span></a>.</p>
+<p>Resource pools thus have an optional associated list of YANG type definitions. This is done by means of a mapping table.</p>
+<p id="mapping-table"><strong>Mapping Table</strong></p>
+<p>Netrino also provides a mapping table, that can be used for auto-allocation during service definition and creation.
+In addition to the as-per-usual <em>id</em>, the mapping table has three columns:</p>
+<p><em>Yang type</em> | <em>mapping type</em> | <em>value</em></p>
+<p>Yang type is the YANG type definition.
+Mapping type can either be “resource_pool”, or “netrino_mapper”.
+In the case of:</p>
+<ul class="simple">
+<li>resouce_pool: the value is equal to the id of a resource pool from which the leaf will be auto-allocated.</li>
+<li>netrino_mapper: the value is equal to a “netrino_mappers” Entrypoint. This entrypoint returns a function that takes a luxon wsgi request object as argument, and returns some value to be used for auto-allocation of the leaf.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>For example, we can have:</p>
+<p><em>ipv4-address</em> | <em>resource_pool</em> | <em>c5b040d4-180f-4b03-bdde-5c2b84b6146f</em></p>
+<p>Where:</p>
+<ul class="simple">
+<li><em>ipv4-address</em> is the <a class="reference external" href="https://tools.ietf.org/html/rfc6991">RFC 6991</a> type definition of <code class="docutils literal notranslate"><span class="pre">ipv4-address</span></code></li>
+<li><em>resource_pool</em> means to auto allocate from a pool</li>
+<li><em>c5b040d4-180f-4b03-bdde-5c2b84b6146f</em> is the id of the pool to allocate from</li>
+</ul>
+<p>or</p>
+<p><em>tenant-id</em> | <em>netrino_mapper</em> | <em>infinitystone_tenant</em></p>
+<p>Where:</p>
+<ul class="last simple">
+<li><em>tenant-id</em> is the name of a <a class="reference external" href="https://tools.ietf.org/html/rfc7950#section-7.3">derived type</a></li>
+<li><em>netrino_mapper</em> means to auto allocate from the result of a netrino mapper function</li>
+<li><em>infinitystone_tenant</em> is the name of a <code class="docutils literal notranslate"><span class="pre">netrino-mappers</span></code> entry point.</li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Example Entry point:</p>
+<div class="code last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setup_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">entry_points</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;netrino_mappers&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;infinitystone_tenant = netrino.mappers:tenant_from_context&#39;</span>
+        <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Resource pools can be globally significant (e.g. public IPv4’s) or element-significant (eg. VLANS on a switch). Unless
+specified otherwise, global is assumed. If locally significant is specified during the creation/updating of a resource
+pool, then the element or element tag has to be specified that this resource pool is linked to.</p>
+<p>Elements can also be resources. When elements are to be auto-allocated, an element tag must be associated to the specific
+YANG model in the <a class="reference internal" href="#services"><span class="std std-ref">service</span></a>.</p>
+</div>
+<div class="section" id="service-desginer">
+<h2>Service Desginer<a class="headerlink" href="#service-desginer" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="templating-engine">
+<h3>Templating Engine<a class="headerlink" href="#templating-engine" title="Permalink to this headline">¶</a></h3>
+<p>The Templating Engine is responsible for managing the templates. When templates are created, they are uploaded
+to the object store (Katalog).</p>
+<div class="section" id="orchestration-templates">
+<h4>Orchestration Templates<a class="headerlink" href="#orchestration-templates" title="Permalink to this headline">¶</a></h4>
+<p>Netrino offers the following orchestration templates.</p>
+<p><strong>YANG</strong></p>
+<p>Netrino makes use of <a class="reference external" href="https://tools.ietf.org/html/rfc7950">YANG</a> models to define Services. Although YANG was designed
+along side NETCONF, it can be used for any arbitrary modelling since it can be serialized into popular API notation
+formats such as JSON or XML.</p>
+<p>This means not only does Netrino support your favourite vendor out of the box by loading its YANG models (if it already
+supports NETCONF), but you can even make provision for ones that don’t by creating the YANG model and interface/driver
+for it yourself.</p>
+<p>The YANG models are stored in the object store, and a helper function is supplied that can map the module
+name to the namespace, to be stored for easy lookup.</p>
+<p><strong>HEAT</strong></p>
+<p>Netrino also makes HEAT templates available for orchestration.</p>
+<p><strong>Ansible</strong></p>
+<p>Netrino also makes HEAT templates available for orchestration</p>
+<p><strong>TEXT</strong></p>
+<p>Text templates can be used for example when the underlying element interface can take configuration snippets as input.
+For example napalm’s <code class="docutils literal notranslate"><span class="pre">load_merge()</span></code> method.</p>
+<p><strong>JSON</strong></p>
+<p>Json templates, typically used alongside with REST API element interfaces.</p>
+<p><strong>XML</strong></p>
+<p>XML templates.</p>
+</div>
+<div class="section" id="service-templates">
+<span id="services"></span><h4>Service Templates<a class="headerlink" href="#service-templates" title="Permalink to this headline">¶</a></h4>
+<p>In order for Netrino to provision a service, it has to be told what the service comprises of. The Service designer
+provides to the operator the opportunity to do just this.</p>
+<p>When designing a service, the operator specifies the YANG model or models to use for the service. Each model can also
+be linked to an element or element tag. In case linked to an element tag, the requester of the service may specify
+which of those elements are to be used for this particular model of the service. (Specifying an element that does not have
+the associated tag will result in a failure of the <a class="reference internal" href="#service-request"><span class="std std-ref">Service Request</span></a> creation.)
+If the element id is omitted, an element is auto-allocated from the pool of elements with the tag, if auto-allocation
+of the element was specified.</p>
+<p>By default, for each YANG model specified, only leafs with the mandatory statement in the YANG model are considered
+to be manditory. Netrino provides the opportunity for the operator to override this (during service template creation)
+for each leaf/container in the model, and also provides the opportunity to link which leafs should be auto-allocated.</p>
+<p>This is done by means of the <a class="reference internal" href="#mapping-table"><span class="std std-ref">mapping table</span></a>.</p>
+<p>By default, the netconf interface will be used for communication with the element, but this can be overwritten when
+designing the service. The JSON data sent in the request (to the orchestration engine)
+for creation of the service, may contain the device ID and data matching the YANG model for each model.
+Netrino will attempt to auto-allocate compulsory fields that was missing
+from the request, if those leafs/containers were specified to be auto-allocated.</p>
+<p>JSON data that is send to the REST API of the element interface view, must conform to
+<a class="reference external" href="https://tools.ietf.org/html/rfc7951">RFC7951 JSON Encoding of Data Modeled with YANG</a>
+in order to identify the
+particular YANG model. From the namespace to module mapping, the YANG model can be retrieved for each submitted portion</p>
+<p>Some interfaces do not make use of netconf as the underlying communication protocol. When services are designed for these,
+we still specify a YANG model, but specify a different interface to be used. Netrino comes with a couple of built-in
+YANG models for its built-in drivers, such as ansible and SNMP. These YANG models are used during the creation of the
+<a class="reference internal" href="#service-request"><span class="std std-ref">Service Requests</span></a> for:</p>
+<ul class="simple">
+<li>validating that the data received conforms to the model, and</li>
+<li>auto-allocation of resources that was required as per the service template, but was not present in the data.</li>
+</ul>
+<p>If the validation and allocation was successfull during such a service request, the received data is updated with the
+auto-allocated data, and passed onward to the interface.</p>
+<img alt="../_images/ServiceDesigner.png" src="../_images/ServiceDesigner.png" />
+<p id="dst">Services are also used for the purpose of obtaining data from elements. Let’s call these Data Services Templates.</p>
+<p>Each model in a Service Template can also be associated to such a Data Service Template, for the purposes of gathering
+Data related to the model, and storing it in the Service Request. For example, a Service Template might be for a
+Virtual Machine (VM) deployed on an Openstack cluster.
+When such a Service has peen provisioned, one might care about data such as the IP address that
+was assigned, and the URL to access the console. For this purpose one can create a Data Service Template that retrieves
+the required data to be stored in the <a class="reference internal" href="#service-request"><span class="std std-ref">Service Request</span></a> for the VM Service.</p>
+<p>Netrino is also to provide the option to allocate a cost to a Service. This is optional, and can have one of two
+payment types: Once-off or recurring. In the case of recurring, the recurrance period can also be specified. There
+is also an option to specify the availability. By default the availability will be private (meaning only the operator
+or owning-tenant can request this service). When the availability is set to public, and the service does not belong to a Tenant,
+it will become available in the Self-Service Market Place. (Perhaps revenue resulting from tenant-owning public services
+can be shared between the Tenant and Service Provider - a sort of agent programme).</p>
+</div>
+</div>
+</div>
+<div class="section" id="service-requests">
+<span id="service-request"></span><h2>Service Requests<a class="headerlink" href="#service-requests" title="Permalink to this headline">¶</a></h2>
+<p>This is one of the main reasons for Netrino’s existence. A service request is the marriage of a service to a customer,
+which inevitably also involves configuration update on one or more elements. If customer X wants service Y, create
+a service request on Netrino.</p>
+<p>During the creation of a Service Request the customer is automatically selected as the current tenant in the
+Infinitystone scope, and the service template must explicitly be specified. Once the service template is known,
+the additional fields are dictated by the YANG models in the service template, as well as the device configuration
+and YANG customization in the Service Template. If the data in the service request can not be parsed for whatever reason
+(including invalid syntax, required field(s) missing or resource depleted) the service request is not created.
+On the other hand, if all information was supplied correctly, the service request is created immediately and
+a job ID is returned. The user may reference this ID at any time to get an update on the status of the Service
+Request and its associated jobs.</p>
+<p>During the creation of a service request, Netrino will auto-populate resources from the next available in the pool
+where required. The moment it does this, it will immediately remove the resource as being available from the pool,
+in order to prevent a race condition. If spare resources in the pool has been depleted, an exception is raised.</p>
+<p>The data sent in the Service Request, comprises of a service Template ID, and an ordered array of objects. Each object
+should contain the data for the corresponding YANG model in the <a class="reference internal" href="#services"><span class="std std-ref">Service Template</span></a>, as well as the
+element ID(s) if required. Each one of the entries in the list is of course passed to a minion.</p>
+<p>Each of these tasks may return some data. The worker performing the task will update its associated model in the service
+request with the data returned, for the purposes of viewing a log of the result of the task.</p>
+<p>In addition to attributes like</p>
+<ul class="simple">
+<li>Date Service was activated</li>
+<li>Date Service was cancelled</li>
+<li>Current Service status</li>
+</ul>
+<p>each Service Request also makes provision for storing additional arbitrary data related to each model in the
+service. When the status for a Service Request is queried for the first time, it will fire up a Service Request on each
+of the <a class="reference internal" href="#dst"><span class="std std-ref">Data Service Templates</span></a> associated with the models, if any. The results of those Service Requests,
+are used to populate this field.</p>
+<p>Subsequent attempts on Service Requests Status will update these fields.</p>
+</div>
+<div class="section" id="service-request-manager">
+<h2>Service Request Manager<a class="headerlink" href="#service-request-manager" title="Permalink to this headline">¶</a></h2>
+<p>The Service Request Manager is the place where one may obtain the list of previously created Service Requests, as well
+as drill down into them to see the status of each. Each one lists the deployment status of the each YANG model in
+the Service Template, as reported back from the minion that implemented the request.</p>
+</div>
+<div class="section" id="service-scheduler">
+<h2>Service Scheduler<a class="headerlink" href="#service-scheduler" title="Permalink to this headline">¶</a></h2>
+<p>Netrino Also provides a Service scheduler, where Service Requests can be scheduled ahead of time. The Service Schedluer
+supports once-off Service Request creation, as well as recurring creation of Service Requests.</p>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="tp" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>The Tachyonic Project is a Multi-Tenant Multi-Tiered Eco System that was build for Service Providers. For more information, see <a class="reference external" href="http://tachyonic.org">http://tachyonic.org</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="tags" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Using the Scuttle method. See <a class="reference external" href="http://howto.philippkeller.com/2005/04/24/Tags-Database-schemas/">http://howto.philippkeller.com/2005/04/24/Tags-Database-schemas/</a>.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+                    </div>
+                </div>
+            </div>
+            </div>
+        <!--DOC-->
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<span class="float-right"><a href="#">Back to top</a></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer>
+			<div class="container">
+				<div class="row">
+					<div class="col text-center">
+                        <span class="white">&copy; 2019 Myria Solutions (PTY) Ltd </span>
+					</div>
+				</div>
+			</div>
+		</footer>
+    </body>
+</html>

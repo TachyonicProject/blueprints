@@ -1,0 +1,776 @@
+
+/* Inline interpreted text*/
+div.admonition,
+div.attention,
+div.caution,
+div.danger,
+div.error,
+div.hint,
+div.important,
+div.note,
+div.tip,
+div.warning {
+  margin: 30.8px;
+  border: 1px dotted #777777;
+  padding: 22px;
+}
+div.admonition p.admonition-title,
+div.hint p.admonition-title,
+div.important p.admonition-title,
+div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+div.danger p.admonition-title,
+div.error p.admonition-title {
+  color: #d9423d;
+  font-weight: bold ;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+div.admonition p.admonition-title,
+div.caution p.admonition-title,
+div.warning p.admonition-title {
+  color: #f0a843;
+  font-weight: bold ;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+div.attention p.admonition-title,
+div.important p.admonition-title {
+  color: #56cc56;
+}
+div.note p.admonition-title,
+div.hint p.admonition-title,
+div.tip p.admonition-title {
+  color: #4dc4e8;
+}
+
+dt {
+    width: 100%;
+}
+
+span.caption-text {
+  font-weight: bold;
+}
+
+.doc-menu ul {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: #f1f1f1;
+}
+
+.doc-menu li a {
+    display: block;
+    color: #000;
+    text-decoration: none;
+    padding: 2px 2px;
+}
+
+/* Change the link color on hover */
+.doc-menu ul li:hover {
+    background-color: #bababa;
+}
+
+.doc-menu ul li.current {
+    background-color: #479dd6;
+}
+
+.doc-menu ul li.current > a {
+ font-weight:bold;
+}
+
+.doc-menu ul li a.current {
+ font-weight:bold;
+}
+
+div.highlight {
+  background: none;
+}
+
+a.headerlink {
+  margin-left: 0.25em;
+}
+
+article,aside,details,figcaption,figure,footer,header,hgroup,nav,section {
+ display:block
+}
+audio,canvas,video {
+ display:inline-block;
+ *display:inline;
+ *zoom:1
+}
+audio:not([controls]) {
+ display:none
+}
+[hidden] {
+ display:none
+}
+* {
+ -webkit-box-sizing:border-box;
+ -moz-box-sizing:border-box;
+ box-sizing:border-box
+}
+html {
+ font-size:100%;
+ -webkit-text-size-adjust:100%;
+ -ms-text-size-adjust:100%
+}
+a:hover,a:active {
+ outline:0
+}
+abbr[title] {
+ border-bottom:1px dotted
+}
+b,strong {
+ font-weight:bold
+}
+blockquote {
+ margin-bottom: 10px;
+}
+dfn {
+ font-style:italic
+}
+ins {
+ background:#ff9;
+ color:#000;
+ text-decoration:none
+}
+mark {
+ background:#ff0;
+ color:#000;
+ font-style:italic;
+ font-weight:bold
+}
+pre,code,.rst-content tt,.rst-content code,kbd,samp {
+ font-family:monospace,serif;
+ _font-family:"courier new",monospace;
+ font-size:1em
+}
+pre {
+ white-space:pre
+}
+q {
+ quotes:none
+}
+q:before,q:after {
+ content:"";
+ content:none
+}
+small {
+ font-size:85%
+}
+sub,sup {
+ font-size:75%;
+ line-height:0;
+ position:relative;
+ vertical-align:baseline
+}
+sup {
+ top:-0.5em
+}
+sub {
+ bottom:-0.25em
+}
+ul,ol,dl {
+ margin:0;
+ padding:0;
+ list-style:none;
+ list-style-image:none
+}
+li {
+ list-style:none
+}
+dd {
+ margin:0
+}
+img {
+ border:0;
+ -ms-interpolation-mode:bicubic;
+ vertical-align:middle;
+ max-width:100%
+}
+svg:not(:root) {
+ overflow:hidden
+}
+figure {
+ margin:0
+}
+form {
+ margin:0
+}
+fieldset {
+ border:0;
+ margin:0;
+ padding:0
+}
+label {
+ cursor:pointer
+}
+legend {
+ border:0;
+ *margin-left:-7px;
+ padding:0;
+ white-space:normal
+}
+table {
+ border-collapse:collapse;
+ border-spacing:0
+}
+td {
+ vertical-align:top
+}
+.hidden {
+ display:none !important;
+ visibility:hidden
+}
+.visuallyhidden {
+ border:0;
+ clip:rect(0 0 0 0);
+ height:1px;
+ margin:-1px;
+ overflow:hidden;
+ padding:0;
+ position:absolute;
+ width:1px
+}
+.visuallyhidden.focusable:active,.visuallyhidden.focusable:focus {
+ clip:auto;
+ height:auto;
+ margin:0;
+ overflow:visible;
+ position:static;
+ width:auto
+}
+.invisible {
+ visibility:hidden
+}
+.relative {
+ position:relative
+}
+big,small {
+ font-size:100%
+}
+.clearfix {
+ *zoom:1
+}
+.clearfix:before,.clearfix:after {
+ display:table;
+ content:""
+}
+.clearfix:after {
+ clear:both
+}
+fieldset {
+ border:0;
+ margin:0;
+ padding:0
+}
+legend {
+ display:block;
+ width:100%;
+ border:0;
+ padding:0;
+ white-space:normal;
+ margin-bottom:24px;
+ font-size:150%;
+ *margin-left:-7px
+}
+html {
+ height:100%;
+ overflow-x:hidden
+}
+h1,h2,.rst-content .toctree-wrapper p.caption,h3,h4,h5,h6,legend {
+ margin-top:0;
+ color: #427FA2;
+ font-weight:700;
+ font-family: "Open Sans", Helvetica, Arial, sans-serif;
+}
+p {
+ color: #3979a0;
+ line-height:24px;
+ margin:0;
+ font-size:16px;
+ margin-bottom:24px
+}
+h1 {
+ font-size:175%
+}
+h2,.rst-content .toctree-wrapper p.caption {
+ font-size:150%
+}
+h3 {
+ font-size:125%
+}
+h4 {
+ font-size:115%
+}
+h5 {
+ font-size:110%
+}
+h6 {
+ font-size:100%
+}
+hr {
+ display:block;
+ height:1px;
+ border:0;
+ border-top:1px solid #e1e4e5;
+ margin:24px 0;
+ padding:0
+}
+code,.rst-content tt,.rst-content code {
+ white-space:nowrap;
+ max-width:100%;
+ background:#fff;
+ border:solid 1px #e1e4e5;
+ font-size:75%;
+ padding:0 5px;
+ font-family:Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
+ color:#E74C3C;
+ overflow-x:auto
+}
+code.code-large,.rst-content tt.code-large {
+ font-size:90%
+}
+.rst-content .section ul,.rst-content .toctree-wrapper ul,article ul {
+ list-style:disc;
+ line-height:24px;
+ margin-bottom:24px
+}
+.rst-content .section ul li,.rst-content .toctree-wrapper ul li,article ul li {
+ list-style:disc;
+ margin-left:24px
+}
+.rst-content .section ul li p:last-child,.rst-content .toctree-wrapper ul li p:last-child,article ul li p:last-child {
+ margin-bottom:0
+}
+.rst-content .section ul li ul,.rst-content .toctree-wrapper ul li ul,article ul li ul {
+ margin-bottom:0
+}
+.rst-content .section ul li li,.rst-content .toctree-wrapper ul li li,article ul li li {
+ list-style:circle
+}
+.rst-content .section ul li li li,.rst-content .toctree-wrapper ul li li li,article ul li li li {
+ list-style:square
+}
+.rst-content .section ul li ol li,.rst-content .toctree-wrapper ul li ol li,article ul li ol li {
+ list-style:decimal
+}
+.rst-content .section ol,.rst-content ol.arabic,article ol {
+ list-style:decimal;
+ line-height:24px;
+ margin-bottom:24px
+}
+.rst-content .section ol li,.rst-content ol.arabic li,article ol li {
+ list-style:decimal;
+ margin-left:24px
+}
+.rst-content .section ol li p:last-child,.rst-content ol.arabic li p:last-child,article ol li p:last-child {
+ margin-bottom:0
+}
+.rst-content .section ol li ul,.rst-content ol.arabic li ul,article ol li ul {
+ margin-bottom:0
+}
+.rst-content .section ol li ul li,.rst-content ol.arabic li ul li,article ol li ul li {
+ list-style:disc
+}
+.codeblock-example {
+ border:1px solid #e1e4e5;
+ border-bottom:none;
+ padding:24px;
+ padding-top:48px;
+ font-weight:500;
+ background:#fff;
+ position:relative
+}
+.codeblock-example:after {
+ content:"Example";
+ position:absolute;
+ top:0px;
+ left:0px;
+ background:#9B59B6;
+ color:#fff;
+ padding:6px 12px
+}
+.codeblock-example.prettyprint-example-only {
+ border:1px solid #e1e4e5;
+ margin-bottom:24px
+}
+.codeblock,pre.literal-block,.rst-content .literal-block,.rst-content pre.literal-block,div[class^='highlight'] {
+ border:1px solid #e1e4e5;
+ padding:0px;
+ overflow-x:auto;
+ background:#fff;
+ margin:1px 0 24px 0
+}
+.codeblock div[class^='highlight'],pre.literal-block div[class^='highlight'],.rst-content .literal-block div[class^='highlight'],div[class^='highlight'] div[class^='highlight'] {
+ border:none;
+ background:none;
+ margin:0
+}
+div[class^='highlight'] td.code {
+ width:100%
+}
+.linenodiv pre {
+ border-right:solid 1px #e6e9ea;
+ margin:0;
+ padding:12px 12px;
+ font-family:Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
+ font-size:12px;
+ line-height:1.5;
+ color:#d9d9d9
+}
+div[class^='highlight'] pre {
+ white-space:pre;
+ margin:0;
+ padding:12px 12px;
+ font-family:Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
+ font-size:12px;
+ line-height:1.5;
+ display:block;
+ overflow:auto;
+ color:#404040
+}
+.rst-content img {
+ max-width:100%;
+ height:auto !important
+}
+.rst-content .highlight>pre {
+ line-height:normal
+}
+.rst-content div.figure {
+ margin-bottom:24px
+}
+.rst-content div.figure p.caption {
+ font-style:italic
+}
+.rst-content div.figure.align-center {
+ text-align:center
+}
+.rst-content .section>img,.rst-content .section>a>img {
+ margin-bottom:24px
+}
+.rst-content blockquote {
+ margin-left:24px;
+ line-height:24px;
+ margin-bottom:24px
+}
+.rst-content .note .last,.rst-content .attention .last,.rst-content .caution .last,.rst-content .danger .last,.rst-content .error .last,.rst-content .hint .last,.rst-content .important .last,.rst-content .tip .last,.rst-content .warning .last,.rst-content .seealso .last,.rst-content .admonition-todo .last {
+ margin-bottom:0
+}
+.rst-content .admonition-title:before {
+ margin-right:4px
+}
+.rst-content .admonition table {
+ border-color:rgba(0,0,0,0.1)
+}
+.rst-content .admonition table td,.rst-content .admonition table th {
+ background:transparent !important;
+ border-color:rgba(0,0,0,0.1) !important
+}
+.rst-content .section ol.loweralpha,.rst-content .section ol.loweralpha li {
+ list-style:lower-alpha
+}
+.rst-content .section ol.upperalpha,.rst-content .section ol.upperalpha li {
+ list-style:upper-alpha
+}
+.rst-content .section ol p,.rst-content .section ul p {
+ margin-bottom:12px
+}
+.rst-content .line-block {
+ margin-left:24px
+}
+.rst-content .topic-title {
+ font-weight:bold;
+ margin-bottom:12px
+}
+.rst-content .toc-backref {
+ color:#404040
+}
+.rst-content .align-right {
+ float:right;
+ margin:0px 0px 24px 24px
+}
+.rst-content .align-left {
+ float:left;
+ margin:0px 24px 24px 0px
+}
+.rst-content .align-center {
+ margin:auto;
+ display:block
+}
+.rst-content h1 .headerlink,.rst-content h2 .headerlink,.rst-content .toctree-wrapper p.caption .headerlink,.rst-content h3 .headerlink,.rst-content h4 .headerlink,.rst-content h5 .headerlink,.rst-content h6 .headerlink,.rst-content dl dt .headerlink,.rst-content p.caption .headerlink {
+ display:none;
+ visibility:hidden;
+ font-size:14px
+}
+.rst-content h1 .headerlink:after,.rst-content h2 .headerlink:after,.rst-content .toctree-wrapper p.caption .headerlink:after,.rst-content h3 .headerlink:after,.rst-content h4 .headerlink:after,.rst-content h5 .headerlink:after,.rst-content h6 .headerlink:after,.rst-content dl dt .headerlink:after,.rst-content p.caption .headerlink:after {
+ visibility:visible;
+ content:"";
+ font-family:FontAwesome;
+ display:inline-block
+}
+.rst-content h1:hover .headerlink,.rst-content h2:hover .headerlink,.rst-content .toctree-wrapper p.caption:hover .headerlink,.rst-content h3:hover .headerlink,.rst-content h4:hover .headerlink,.rst-content h5:hover .headerlink,.rst-content h6:hover .headerlink,.rst-content dl dt:hover .headerlink,.rst-content p.caption:hover .headerlink {
+ display:inline-block
+}
+.rst-content .sidebar {
+ float:right;
+ width:40%;
+ display:block;
+ margin:0 0 24px 24px;
+ padding:24px;
+ background:#f3f6f6;
+ border:solid 1px #e1e4e5
+}
+.rst-content .sidebar p,.rst-content .sidebar ul,.rst-content .sidebar dl {
+ font-size:90%
+}
+.rst-content .sidebar .last {
+ margin-bottom:0
+}
+.rst-content .sidebar .sidebar-title {
+ display:block;
+ font-family:"Roboto Slab","ff-tisa-web-pro","Georgia",Arial,sans-serif;
+ font-weight:bold;
+ background:#e1e4e5;
+ padding:6px 12px;
+ margin:-24px;
+ margin-bottom:24px;
+ font-size:100%
+}
+.rst-content .highlighted {
+ background:#F1C40F;
+ display:inline-block;
+ font-weight:bold;
+ padding:0 6px
+}
+.rst-content .footnote-reference,.rst-content .citation-reference {
+ vertical-align:super;
+ font-size:90%
+}
+.rst-content table.docutils.citation,.rst-content table.docutils.footnote {
+ background:none;
+ border:none;
+ color:#999
+}
+.rst-content table.docutils.citation td,.rst-content table.docutils.citation tr,.rst-content table.docutils.footnote td,.rst-content table.docutils.footnote tr {
+ border:none;
+ background-color:transparent !important;
+ white-space:normal
+}
+.rst-content table.docutils.citation td.label,.rst-content table.docutils.footnote td.label {
+ padding-left:0;
+ padding-right:0;
+ vertical-align:top
+}
+.rst-content table.docutils.citation tt,.rst-content table.docutils.citation code,.rst-content table.docutils.footnote tt,.rst-content table.docutils.footnote code {
+ color:#555
+}
+.rst-content table.field-list {
+ border:none
+}
+.rst-content table.field-list td {
+ border:none;
+ padding-top:5px
+}
+.rst-content table.field-list td>strong {
+ display:inline-block;
+ margin-top:3px
+}
+.rst-content table.field-list .field-name {
+ padding-right:10px;
+ text-align:left;
+ white-space:nowrap
+}
+.rst-content table.field-list .field-body {
+ text-align:left;
+ padding-left:0
+}
+.rst-content tt,.rst-content tt,.rst-content code {
+ color:#000;
+ padding:2px 5px
+}
+.rst-content tt big,.rst-content tt em,.rst-content tt big,.rst-content code big,.rst-content tt em,.rst-content code em {
+ font-size:100% !important;
+ line-height:normal
+}
+.rst-content tt.literal,.rst-content tt.literal,.rst-content code.literal {
+ color:#E74C3C
+}
+.rst-content tt.xref,a .rst-content tt,.rst-content tt.xref,.rst-content code.xref,a .rst-content tt,a .rst-content code {
+ font-weight:bold;
+ color:#404040
+}
+.rst-content a tt,.rst-content a tt,.rst-content a code {
+ color:#2980B9
+}
+.rst-content dl {
+ margin-bottom:24px
+}
+.rst-content dl dt {
+ font-weight:bold
+}
+.rst-content dl p,.rst-content dl table,.rst-content dl ul,.rst-content dl ol {
+ margin-bottom:12px !important
+}
+.rst-content dl dd {
+ margin:0 0 12px 24px
+}
+.rst-content dl:not(.docutils) {
+ margin-bottom:24px
+}
+.rst-content dl:not(.docutils) dt {
+ display:inline-block;
+ margin:6px 0;
+ font-size:90%;
+ line-height:normal;
+ background:#e7f2fa;
+ color:#2980B9;
+ border-top:solid 3px #6ab0de;
+ padding:6px;
+ position:relative
+}
+.rst-content dl:not(.docutils) dt:before {
+ color:#6ab0de
+}
+.rst-content dl:not(.docutils) dt .headerlink {
+ color:#404040;
+ font-size:100% !important
+}
+.rst-content dl:not(.docutils) dl dt {
+ margin-bottom:6px;
+ border:none;
+ border-left:solid 3px #ccc;
+ background:#f0f0f0;
+ color:#555
+}
+.rst-content dl:not(.docutils) dl dt .headerlink {
+ color:#404040;
+ font-size:100% !important
+}
+.rst-content dl:not(.docutils) dt:first-child {
+ margin-top:0
+}
+.rst-content dl:not(.docutils) tt,.rst-content dl:not(.docutils) tt,.rst-content dl:not(.docutils) code {
+ font-weight:bold
+}
+.rst-content dl:not(.docutils) tt.descname,.rst-content dl:not(.docutils) tt.descclassname,.rst-content dl:not(.docutils) tt.descname,.rst-content dl:not(.docutils) code.descname,.rst-content dl:not(.docutils) tt.descclassname,.rst-content dl:not(.docutils) code.descclassname {
+ background-color:transparent;
+ border:none;
+ padding:0;
+ font-size:100% !important
+}
+.rst-content dl:not(.docutils) tt.descname,.rst-content dl:not(.docutils) tt.descname,.rst-content dl:not(.docutils) code.descname {
+ font-weight:bold
+}
+.rst-content dl:not(.docutils) .optional {
+ display:inline-block;
+ padding:0 4px;
+ color:#000;
+ font-weight:bold
+}
+.rst-content dl:not(.docutils) .property {
+ display:inline-block;
+ padding-right:8px
+}
+.rst-content .viewcode-link,.rst-content .viewcode-back {
+ display:inline-block;
+ color:#27AE60;
+ font-size:80%;
+ padding-left:24px
+}
+.rst-content .viewcode-back {
+ display:block;
+ float:right
+}
+.rst-content p.rubric {
+ margin-bottom:12px;
+ font-weight:bold
+}
+.rst-content tt.download,.rst-content code.download {
+ background:inherit;
+ padding:inherit;
+ font-weight:normal;
+ font-family:inherit;
+ font-size:inherit;
+ color:inherit;
+ border:inherit;
+ white-space:inherit
+}
+.rst-content tt.download span:first-child,.rst-content code.download span:first-child {
+ -webkit-font-smoothing:subpixel-antialiased
+}
+.rst-content tt.download span:first-child:before,.rst-content code.download span:first-child:before {
+ margin-right:4px
+}
+.rst-content .guilabel {
+ border:1px solid #7fbbe3;
+ background:#e7f2fa;
+ font-size:80%;
+ font-weight:700;
+ border-radius:4px;
+ padding:2.4px 6px;
+ margin:auto 2px
+}
+span[id*='MathJax-Span'] {
+ color:#404040
+}
+.math {
+ text-align:center
+}
+
+.rst-content table.docutils,.rst-content table.field-list {
+ border-collapse:collapse;
+ border-spacing:0;
+ empty-cells:show;
+ margin-bottom:24px
+}
+.rst-content table.docutils caption,.rst-content table.field-list caption {
+ color:#000;
+ font:italic 85%/1 arial,sans-serif;
+ padding:1em 0;
+ text-align:center
+}
+.rst-content table.docutils td,.rst-content table.field-list td, .rst-content table.docutils th,.rst-content table.field-list th {
+ font-size:90%;
+ margin:0;
+ overflow:visible;
+ padding:8px 16px
+}
+.rst-content table.docutils td:first-child,.rst-content table.field-list td:first-child, .rst-content table.docutils th:first-child,.rst-content table.field-list th:first-child {
+ border-left-width:0
+}
+.rst-content table.docutils thead,.rst-content table.field-list thead {
+ color:#000;
+ text-align:left;
+ vertical-align:bottom;
+ white-space:nowrap
+}
+.rst-content table.docutils thead th,.rst-content table.field-list thead th {
+ font-weight:bold;
+ border-bottom:solid 2px #e1e4e5
+}
+.rst-content table.docutils td,.rst-content table.field-list td {
+ background-color:transparent;
+ vertical-align:middle
+}
+.rst-content table.docutils td p,.rst-content table.field-list td p {
+ line-height:18px
+}
+.rst-content table.docutils td p:last-child,.rst-content table.field-list td p:last-child {
+ margin-bottom:0
+}
+.rst-content table.docutils:not(.field-list) tr:nth-child(2n-1) td {
+ background-color:#f3f6f6
+}
+.rst-content table.docutils {
+ border:1px solid #e1e4e5
+}
+.rst-content table.docutils td {
+ border-bottom:1px solid #e1e4e5;
+ border-left:1px solid #e1e4e5
+}
+.rst-content table.docutils tbody>tr:last-child td {
+ border-bottom-width:0
+}
