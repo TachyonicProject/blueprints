@@ -209,7 +209,7 @@ On nodes 1 and 2:
 
     cluster.name: my-cluster
     #provide node name (change node number from node to node).
-    node.name: "es-node-1"
+    node.name: "node-1"
     node.master: true
     node.data: true
 
@@ -230,7 +230,7 @@ And on node-3:
 
     cluster.name: my-cluster
     #provide node name (change node number from node to node).
-    node.name: "es-node-3"
+    node.name: "node-3"
     node.master: true
     node.data: false
 
