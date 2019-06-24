@@ -1,6 +1,6 @@
-============
-Orchestrator
-============
+============================================
+Netrino, the TachyonicProject's Orchestrator
+============================================
 
 .. note:: This is still a work in progress.
 
@@ -155,7 +155,7 @@ Elements can be updated on an ad-hoc basis as well.
 Interfaces
 ==========
 As mentioned, the interface used for communicating with an element, is a python module. It has an ``Interface`` class
-registered as ``netrino_interface`` entry point. This module must also register a ``Discover`` and ``Element`` class as
+ registered as ``netrino_interface`` entry point. This module must also register a ``Discover`` and ``Element`` class as
 ``netrino_discover`` and ``netrino_element`` entry points respectively. The discover class will add an element if
 successful communication attempt has been made via the same interface, and the element class is a Luxon model indicating
 the structure of the metadata.
@@ -208,11 +208,19 @@ In addition to the as-per-usual *id*, the mapping table has three columns:
 *Yang type* | *mapping type* | *value*
 
 Yang type is the YANG type definition.
-Mapping type can either be "resource_pool", or "netrino_mapper".
+Mapping can be one of
+
+* "resource_pool",
+* "netrino_mapper",
+* "user_select",
+* "task_output"
+
 In the case of:
 
-* resouce_pool: the value is equal to the id of a resource pool from which the leaf will be auto-allocated.
+* resouce_pool: the value must be in the form type:id, where type is the pool type and id the id of a resource pool from which the leaf will be auto-allocated.
 * netrino_mapper: the value is equal to a "netrino_mappers" Entrypoint. This entrypoint returns a function that takes a luxon wsgi request object as argument, and returns some value to be used for auto-allocation of the leaf.
+* user_select: This is used in cases where the user must select a value from a list, and it does not make sense to hard code the enumeration types in the yang model, for example when the selection is dynamic. The entry for value here is an api location that will return the list of available options to choose from.
+* task_output: the value must be in the format x:path, where x is the sequence number of a model in the same service template, and path is the json_path [#jsonpath]_ to find the value.
 
 .. note::
 
@@ -228,11 +236,11 @@ In the case of:
 
     or
 
-    *tenant-id* | *netrino_mapper* | *infinitystone_tenant*
+    *tenant_id* | *netrino_mapper* | *infinitystone_tenant_from_context*
 
     Where:
 
-    * *tenant-id* is the name of a `derived type <https://tools.ietf.org/html/rfc7950#section-7.3>`_
+    * *tenant_id* is the name of a `derived type <https://tools.ietf.org/html/rfc7950#section-7.3>`_
     * *netrino_mapper* means to auto allocate from the result of a netrino mapper function
     * *infinitystone_tenant* is the name of a ``netrino-mappers`` entry point.
 
@@ -429,3 +437,4 @@ supports once-off Service Request creation, as well as recurring creation of Ser
 
 .. [#tp] The Tachyonic Project is a Multi-Tenant Multi-Tiered Eco System that was build for Service Providers. For more information, see `<http://tachyonic.org>`_
 .. [#tags] Using the Scuttle method. See `<http://howto.philippkeller.com/2005/04/24/Tags-Database-schemas/>`_.
+.. [#jsonpath] Netrino uses https://github.com/tomas-fp/jsonpath-ng.
