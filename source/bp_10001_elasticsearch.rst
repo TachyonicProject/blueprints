@@ -35,7 +35,7 @@ Helpers
 An ElasticSearch helper is supplied, which is a wrapper around the official elasticsearch Class, and obtains credentials
 from the project's .ini file's ``[objectstore]`` section. A Basic example:
 
-  .. code:: bash
+.. code:: bash
 
     [objectstore]
     type=ElasticSearch
@@ -165,7 +165,7 @@ docker containers to provide external functionality sych as MariaDB, redis etc. 
 elasticsearch container available. In devstack it is launched with the following environment variables to start as
 a single node:
 
-.. code::
+.. code:: bash
 
   docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.1.1
 
@@ -181,7 +181,7 @@ Installing Java
 ~~~~~~~~~~~~~~~
 On all three nodes:
 
-.. code::
+.. code:: bash
 
     sudo apt-get update
     sudo apt-get install default-jre
@@ -190,7 +190,7 @@ Installing Elastic Search
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 On Debian systems the ``apt-transport-https`` package is required. On all three nodes:
 
-.. code::
+.. code:: bash
 
     wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
     sudo apt-get install apt-transport-https
@@ -205,7 +205,7 @@ On each of the nodes, the file to edit is ``/etc/elasticsearch/elasticsearch.yml
 
 On nodes 1 and 2:
 
-.. code::
+.. code:: bash
 
     cluster.name: my-cluster
     #provide node name (change node number from node to node).
@@ -226,7 +226,7 @@ On nodes 1 and 2:
 
 And on node-3:
 
-.. code::
+.. code:: bash
 
     cluster.name: my-cluster
     #provide node name (change node number from node to node).
@@ -250,7 +250,7 @@ In order to set up authentication on the service, one needs to set ``xpack.secur
 license, this requires inter-node encryption with ``xpack.security.transport.ssl.enabled: true``.
 To set up, generate a certificate authority for your cluster. For example, on node-1:
 
-.. code::
+.. code:: bash
 
     /usr/share/elasticsearch/bin/elasticsearch-certutil ca
     mkdir /etc/elasticsearch/certs
@@ -261,7 +261,7 @@ To set up, generate a certificate authority for your cluster. For example, on no
 
 Then edit ``/etc/elasticsearch/elasticsearch.yml``:
 
-.. code::
+.. code:: bash
 
     xpack.security.enabled: true
     xpack.security.transport.ssl.enabled: true
@@ -285,7 +285,7 @@ These value can be configured using the Xmx and Xms settings in the ``jvm.option
 
 On Debian based systems with 4 GB RAM, edit ``/etc/elasticsearch/jvm.options``:
 
-.. code::
+.. code:: bash
 
     -Xms2g
     -Xmx2g
@@ -310,7 +310,7 @@ To override them, add a file called ``/etc/systemd/system/elasticsearch.service.
 (alternatively, run ``sudo systemctl edit elasticsearch`` which opens the file automatically inside the
 default editor):
 
-.. code::
+.. code:: bash
 
     [Service]
     LimitMEMLOCK=infinity
@@ -321,13 +321,13 @@ Next, use mlockall to lock the Elasticsearch process to RAM. To do this,
 open the Elasticsearch configuration file on all nodes in the cluster
 ``/etc/elasticsearch/elasticsearch.yml``, and uncomment:
 
-.. code::
+.. code:: bash
 
     bootstrap.memory_lock: true
 
 and in ``/etc/default/elasticsearch`` set:
 
-.. code::
+.. code:: bash
 
     MAX_LOCKED_MEMORY=unlimited
 
@@ -336,13 +336,13 @@ Adjusting virtual memory:
 
 To avoid running out of virtual memory, increase the amount of limits on mmap counts. In ``/etc/sysctl.conf``, set:
 
-.. code::
+.. code:: bash
 
     vm.max_map_count=262144
 
 On DEB/RPM, this setting is configured automatically. Verify with:
 
-.. code::
+.. code:: bash
 
     $ sysctl vm.max_map_count
     vm.max_map_count = 262144
@@ -357,7 +357,7 @@ The common recommendation for this setting is 65,536 and higher.
 
 In ``/etc/security/limits.conf``:
 
-.. code::
+.. code:: bash
 
     elasticsearch - nofile 65536
 
@@ -366,7 +366,7 @@ Finally
 ^^^^^^^
 Then start the elastic-search service.
 
-.. code::
+.. code:: bash
 
     sudo service elasticsearch start
 
@@ -379,7 +379,7 @@ create a user account, and assign a role to it. This is done via the security AP
 authentication, one must first set up the passwords for the built-in user accounts, in order to use that for
 the subsequent creation of a new user account. To create the passwords for the built-in accounts:
 
-.. code::
+.. code:: bash
 
     cd /usr/share/elasticsearch
     ./bin/elasticsearch-setup-passwords interactive
@@ -397,7 +397,7 @@ where ``<password>`` is the password entered for the elasticsearch user in the p
 
 Verifying the cluster:
 ~~~~~~~~~~~~~~~~~~~~~~
-.. code::
+.. code:: bash
 
     curl -XGET 'http://tachyonic:T%40chy0n1c@172.16.0.22:9200/_cluster/health?pretty'
     curl -XGET 'http://tachyonic:T%40chy0n1c@172.16.0.22:9200/_cluster/state?pretty'
@@ -429,7 +429,7 @@ Redundancy
 With three nodes in the cluster, the setup can be made highly available with haproxy. Example config snippet
 for ``/etc/haproxy/haproxy.conf`` on node 1:
 
-.. code::
+.. code:: bash
 
     listen elasticsearch
         bind 172.16.0.22:9292
@@ -450,7 +450,7 @@ log file.
 References
 ----------
 
-.. rubric::
+.. rubric:: References
 
 .. [#es] `<https://pypi.org/project/elasticsearch/>`_
 .. [#mshards] `<https://www.elastic.co/guide/en/elasticsearch/guide/2.x/kagillion-shards.html>`_
