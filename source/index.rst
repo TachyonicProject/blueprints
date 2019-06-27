@@ -11,6 +11,7 @@ Documentation
 
    license
    bp_10004_blueprint_standard
+   bp_10001_elasticsearch
    objectstore/index
    netrino/index
 
