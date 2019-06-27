@@ -20,6 +20,13 @@ as plain text editors or Sphinx-Doc and exported to other format such as PDF.
 
 reStructuredText (RST, ReST, or reST) is a file format for textual data used primarily in the Python programming language community for technical documentation.
 
+PDF file formats may be generated with the `rst2dfp <https://github.com/rst2pdf/rst2pdf>`_ tool:
+
+.. code::
+
+    pip2 install rst2pdf
+    rst2pdf source.rst output.pdf
+
 Layout
 ------
 
