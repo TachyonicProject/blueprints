@@ -19,10 +19,14 @@ This document covers some of the concepts of Elastic search, and how it is imple
 
 Integration
 -----------
-Like all good WEB frameworks, luxon makes use of ORM. It has for example a MySQL Driver that can be used to translate
-Models to MySQL tables. To make storage back-ends interchangeable, the aim is to use the same technique of providing
-ElastcSearhModel classes that inherits from the Model class. As such, an ``luxon -d`` will create MySQL tables for
-SQLModels, and create ElasticSearch indices and their mappings for ElasticSearch Models.
+Like all good WEB frameworks, luxon makes use of ORM. At the time of this writing, it has for example a MySQL Driver
+that can be used to translate Models (Python Classes) to MySQL tables. The same technique should apply with the creation
+and setting up of the mappings for ElastcSearch indexes. Another requirement is the ability for all ElasticSearch
+objects to be restored in case of data loss. MySQL backup is to be used for this purpose.
+For this reason, the ElasticSearch Class should perform the same function as the existing MySQL Classes, in addition to
+acting as the ElasticSearch interface. When an object is created or updated, it will be created in a MySQL table as
+well as in ElasticSearch, so that the MySQL entry can be used for restoration purposes. When reading, ElasticSearch
+will be used exclusively in order to make use of its enhanced searching capabilities.
 
 Driver
 ~~~~~~
